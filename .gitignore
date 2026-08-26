@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# Data/model artifacts managed outside Git
+.dvc/cache/
+.dvc/tmp/
+data/raw/*.csv
+mlruns/
+mlflow.db
+.pytest_cache/
+models/*.joblib
+models/*.json
+monitoring/*.html
+reports/*.json
+data/processed/*.csv
+
+# OS
+.DS_Store
+Thumbs.db

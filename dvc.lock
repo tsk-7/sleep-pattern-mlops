@@ -1,0 +1,56 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -c "import sys,runpy; sys.path.insert(0,'src'); 
+      runpy.run_module('sleep_mlops.prepare',run_name='__main__')"
+    deps:
+    - path: configs/config.yaml
+      hash: md5
+      md5: 89f2899af476b31904d07a28be81c031
+      size: 725
+    - path: data/raw/sleep_mobile_stress_dataset_15000.csv
+      hash: md5
+      md5: 36b49ad38459e388c00a4ecea5dce7ed
+      size: 910129
+    - path: src/sleep_mlops/prepare.py
+      hash: md5
+      md5: 84fbacf450c464adbea133c4f1cf9fe1
+      size: 1895
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 97293099352f9c9ccd5f6f444f06805d
+      size: 185237
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 2c62d0bb3b5ef836f37394fa71dddaa0
+      size: 740134
+  train:
+    cmd: python -c "import sys,runpy; sys.path.insert(0,'src'); 
+      runpy.run_module('sleep_mlops.train',run_name='__main__')"
+    deps:
+    - path: configs/config.yaml
+      hash: md5
+      md5: 89f2899af476b31904d07a28be81c031
+      size: 725
+    - path: data/processed/test.csv
+      hash: md5
+      md5: 97293099352f9c9ccd5f6f444f06805d
+      size: 185237
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 2c62d0bb3b5ef836f37394fa71dddaa0
+      size: 740134
+    - path: src/sleep_mlops/train.py
+      hash: md5
+      md5: 4704abc7600e27d6da285cefad914598
+      size: 4430
+    outs:
+    - path: models/model_metadata.json
+      hash: md5
+      md5: 4063ecabe53e6bcf987b5a9f8481e7f5
+      size: 668
+    - path: models/sleep_quality_model.joblib
+      hash: md5
+      md5: 74aeacfab6340fc000a74f45e1d6403b
+      size: 58790554

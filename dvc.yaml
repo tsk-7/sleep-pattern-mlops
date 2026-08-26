@@ -1,0 +1,21 @@
+stages:
+  prepare:
+    cmd: python -c "import sys,runpy; sys.path.insert(0,'src'); runpy.run_module('sleep_mlops.prepare',run_name='__main__')"
+    deps:
+      - configs/config.yaml
+      - src/sleep_mlops/prepare.py
+      - data/raw/sleep_mobile_stress_dataset_15000.csv
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+
+  train:
+    cmd: python -c "import sys,runpy; sys.path.insert(0,'src'); runpy.run_module('sleep_mlops.train',run_name='__main__')"
+    deps:
+      - configs/config.yaml
+      - src/sleep_mlops/train.py
+      - data/processed/train.csv
+      - data/processed/test.csv
+    outs:
+      - models/sleep_quality_model.joblib
+      - models/model_metadata.json
