@@ -1,14 +1,17 @@
-name: sleep-pattern-mlops-ci
+name: CI
 
 on:
   push:
-    branches: [main, master]
+    branches:
+      - main
   pull_request:
-    branches: [main, master]
+    branches:
+      - main
 
 jobs:
-  test-and-build:
+  test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,7 +29,9 @@ jobs:
       - name: Run tests
         env:
           PYTHONPATH: src
-        run: pytest -q
+        run: |
+          python -m pytest -q
 
       - name: Build Docker image
-        run: docker build -t sleep-pattern-api:ci .
+        run: |
+          docker build -t sleep-pattern-api:ci .
