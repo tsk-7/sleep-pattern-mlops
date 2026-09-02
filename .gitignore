@@ -26,3 +26,5 @@ data/processed/*.csv
 # OS
 .DS_Store
 Thumbs.db
+
+dvc-storage/
