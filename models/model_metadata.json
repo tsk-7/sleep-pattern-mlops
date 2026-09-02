@@ -1,0 +1,24 @@
+{
+  "run_id": "0ea68fbdafe8489880ff1bb303c19782",
+  "model_path": "models\\sleep_quality_model.joblib",
+  "target": "sleep_quality_score",
+  "features": [
+    "age",
+    "gender",
+    "occupation",
+    "daily_screen_time_hours",
+    "phone_usage_before_sleep_minutes",
+    "sleep_duration_hours",
+    "stress_level",
+    "caffeine_intake_cups",
+    "physical_activity_minutes",
+    "notifications_received_per_day",
+    "mental_fatigue_score"
+  ],
+  "metrics": {
+    "mae": 0.6049805387591116,
+    "rmse": 0.7651290067334118,
+    "r2": 0.7988248219044334
+  },
+  "data_sha256": "8f70397ca5f47d2c27a028ddcb803951c7a733205cb0a5ad57dc43d476942505"
+}
