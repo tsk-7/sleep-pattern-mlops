@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: sleep-pattern-api
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: CORS_ORIGINS
+        sync: false
