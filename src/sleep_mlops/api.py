@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Literal
 
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+from sleep_mlops.prepare import add_engineered_features
 
 try:
     from prometheus_fastapi_instrumentator import Instrumentator
@@ -17,23 +16,13 @@ except ImportError:  # pragma: no cover
 
 
 MODEL_PATH = Path("models/sleep_quality_model.joblib")
+DATASET_PATH = Path("datasets/sleep_mobile_stress_dataset_15000.csv")
+TRAIN_PATH = Path("data/processed/train.csv")
+TEST_PATH = Path("data/processed/test.csv")
 app = FastAPI(
     title="Sleep Pattern Analysis API",
-    version="1.0.0",
-    description="Predicts sleep quality from mobile-use, lifestyle, and demographic features.",
-)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        origin.strip()
-        for origin in os.getenv(
-            "CORS_ORIGINS",
-            "http://localhost:5173,http://127.0.0.1:5173",
-        ).split(",")
-        if origin.strip()
-    ],
-    allow_methods=["GET", "POST"],
-    allow_headers=["Content-Type"],
+    version="2.0.0",
+    description="Predicts sleep quality using the updated timing-aware sleep dataset and feature pipeline.",
 )
 
 
@@ -81,13 +70,40 @@ def root() -> dict:
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "model_available": MODEL_PATH.exists()}
+    return {
+        "status": "ok",
+        "model_available": MODEL_PATH.exists(),
+        "updated_dataset_available": DATASET_PATH.exists(),
+        "processed_train_available": TRAIN_PATH.exists(),
+        "processed_test_available": TEST_PATH.exists(),
+    }
+
+
+@app.get("/metadata")
+def metadata() -> dict:
+    """Return the dataset/model artifacts deployed with this backend."""
+    result = {
+        "dataset": str(DATASET_PATH),
+        "target": "sleep_quality_score",
+        "model": str(MODEL_PATH),
+        "feature_pipeline": "src/sleep_mlops/prepare.py",
+        "engineered_schema": "41 columns in processed train/test datasets",
+    }
+    if DATASET_PATH.exists():
+        result["raw_rows"] = int(pd.read_csv(DATASET_PATH, usecols=["user_id"]).shape[0])
+    if TRAIN_PATH.exists():
+        result["train_rows"] = int(pd.read_csv(TRAIN_PATH, usecols=["user_id"]).shape[0])
+    if TEST_PATH.exists():
+        result["test_rows"] = int(pd.read_csv(TEST_PATH, usecols=["user_id"]).shape[0])
+    return result
 
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict(payload: SleepFeatures) -> PredictionResponse:
     model = get_model()
-    row = pd.DataFrame([payload.model_dump()])
+    row = pd.DataFrame([{**payload.model_dump(), "user_id": "api_request"}])
+    # Apply the same feature engineering as during training
+    row = add_engineered_features(row)
     score = float(model.predict(row)[0])
     score = max(1.0, min(10.0, score))
     return PredictionResponse(

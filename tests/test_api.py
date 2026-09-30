@@ -18,6 +18,16 @@ def test_health():
     assert response.json()["status"] == "ok"
 
 
+def test_metadata_reports_updated_dataset():
+    response = client.get("/metadata")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["target"] == "sleep_quality_score"
+    assert body["raw_rows"] == 15000
+    assert body["train_rows"] == 12000
+    assert body["test_rows"] == 3000
+
+
 def test_validation_rejects_invalid_screen_time():
     payload = {
         "age": 30,

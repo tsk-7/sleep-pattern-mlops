@@ -3,10 +3,8 @@ services:
     name: sleep-pattern-api
     runtime: docker
     plan: free
-    branch: main
+    region: oregon
     dockerfilePath: ./Dockerfile
+    dockerContext: .
     healthCheckPath: /health
-    autoDeploy: true
-    envVars:
-      - key: CORS_ORIGINS
-        sync: false
+    autoDeployTrigger: commit

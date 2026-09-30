@@ -1,5 +1,3 @@
-[core]
-    no_scm = True
-    remote = storage
-['remote "storage"']
-    url = ../dvc-storage
+['remote "origin"']
+    url = s3://dvc
+    endpointurl = https://dagshub.com/tsk-7/sleep-pattern-mlops.s3

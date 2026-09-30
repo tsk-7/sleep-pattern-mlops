@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import joblib
@@ -66,7 +67,7 @@ def train(config_path: str = "configs/config.yaml") -> dict:
     categorical_features = X_train.select_dtypes(include=["object", "category"]).columns.tolist()
     pipeline = build_pipeline(config, numeric_features, categorical_features)
 
-    tracking_uri = config["mlflow"]["tracking_uri"]
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI") or config["mlflow"]["tracking_uri"]
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment(config["mlflow"]["experiment_name"])
 
@@ -95,6 +96,7 @@ def train(config_path: str = "configs/config.yaml") -> dict:
             sk_model=pipeline,
             artifact_path="model",
             registered_model_name=config["mlflow"]["registered_model_name"],
+            skops_trusted_types=["sklearn.tree._tree.Tree"],
         )
 
         Path("models").mkdir(exist_ok=True)

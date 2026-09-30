@@ -3,7 +3,7 @@ project:
   random_state: 42
 
 data:
-  raw_path: data/raw/sleep_mobile_stress_dataset_15000.csv
+  raw_path: datasets/sleep_mobile_stress_dataset_15000.csv
   train_path: data/processed/train.csv
   test_path: data/processed/test.csv
   test_size: 0.20

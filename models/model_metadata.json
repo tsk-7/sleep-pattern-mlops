@@ -1,6 +1,6 @@
 {
-  "run_id": "0ea68fbdafe8489880ff1bb303c19782",
-  "model_path": "models\\sleep_quality_model.joblib",
+  "run_id": "56d0afd9267f454496ef75888bfdc5dd",
+  "model_path": "models/sleep_quality_model.joblib",
   "target": "sleep_quality_score",
   "features": [
     "age",
@@ -13,12 +13,40 @@
     "caffeine_intake_cups",
     "physical_activity_minutes",
     "notifications_received_per_day",
-    "mental_fatigue_score"
+    "mental_fatigue_score",
+    "screen_to_sleep_ratio",
+    "stress_fatigue_index",
+    "digital_intensity",
+    "activity_screen_balance",
+    "age_stress_impact",
+    "notification_frequency",
+    "caffeine_activity_ratio",
+    "pre_sleep_disruption_ratio",
+    "lifestyle_balance_score",
+    "date",
+    "day_of_week",
+    "is_weekend",
+    "bedtime",
+    "wake_time",
+    "last_caffeine_time",
+    "bedtime_circular_sin",
+    "bedtime_circular_cos",
+    "wake_time_circular_sin",
+    "wake_time_circular_cos",
+    "mid_sleep_minutes",
+    "mid_sleep_time",
+    "caffeine_clearance_window",
+    "bedtime_variability",
+    "wake_time_variability",
+    "social_jetlag_score",
+    "work_schedule_mismatch",
+    "late_night_digital_share",
+    "circadian_disruption_index"
   ],
   "metrics": {
-    "mae": 0.6049805387591116,
-    "rmse": 0.7651290067334118,
-    "r2": 0.7988248219044334
+    "mae": 0.5999859892293529,
+    "rmse": 0.7580533819628896,
+    "r2": 0.8025284021951807
   },
-  "data_sha256": "8f70397ca5f47d2c27a028ddcb803951c7a733205cb0a5ad57dc43d476942505"
+  "data_sha256": "e6dbc4af1f0d31b240e29a98b1576ce7da2a3a5e256e564a0750b056ff2f6e8a"
 }
