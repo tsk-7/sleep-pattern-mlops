@@ -1,0 +1,31 @@
+project:
+  name: sleep-pattern-analysis
+  random_state: 42
+
+data:
+  raw_path: datasets/sleep_mobile_stress_dataset_15000.csv
+  train_path: data/processed/train.csv
+  test_path: data/processed/test.csv
+  test_size: 0.20
+  target: sleep_quality_score
+  id_columns:
+    - user_id
+
+model:
+  type: random_forest_regressor
+  n_estimators: 300
+  max_depth: 12
+  min_samples_leaf: 2
+  n_jobs: -1
+  max_rmse_for_promotion: 1.25
+
+mlflow:
+  tracking_uri: sqlite:///mlflow.db
+  experiment_name: sleep-pattern-analysis
+  registered_model_name: sleep_quality_model
+
+monitoring:
+  reference_path: data/processed/train.csv
+  current_path: data/processed/test.csv
+  report_path: monitoring/evidently_report.html
+  drift_share_threshold: 0.30

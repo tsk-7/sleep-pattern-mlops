@@ -1,0 +1,20 @@
+stages:
+  prepare:
+    cmd: PYTHONPATH=src python -m sleep_mlops.prepare
+    deps:
+      - configs/config.yaml
+      - src/sleep_mlops/prepare.py
+      - datasets/sleep_mobile_stress_dataset_15000.csv
+    outs:
+      - data/processed/train.csv
+      - data/processed/test.csv
+  train:
+    cmd: PYTHONPATH=src python -m sleep_mlops.train
+    deps:
+      - configs/config.yaml
+      - src/sleep_mlops/train.py
+      - data/processed/train.csv
+      - data/processed/test.csv
+    outs:
+      - models/sleep_quality_model.joblib
+      - models/model_metadata.json
