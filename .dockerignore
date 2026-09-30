@@ -5,8 +5,6 @@
 __pycache__
 .pytest_cache
 mlruns
-data/raw
-data/processed
 reports
 monitoring
 *.pyc
