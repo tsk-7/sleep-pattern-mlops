@@ -8,3 +8,8 @@ services:
     dockerContext: .
     healthCheckPath: /health
     autoDeployTrigger: commit
+    envVars:
+      - key: SLEEP_DATABASE_URL
+        sync: false
+      - key: FRONTEND_URLS
+        sync: false

@@ -141,6 +141,10 @@ $env:SLEEP_DATABASE_URL = "mysql+pymysql://sleep_app:<url-encoded-password>@127.
 $env:PYTHONPATH = "src"
 ```
 
+For a public deployment, set `SLEEP_DATABASE_URL` to a managed MySQL-compatible database reachable from the deployment platform. Do not use `127.0.0.1` or `localhost` in a cloud deployment; those addresses refer to the API container itself.
+
+The Render blueprint also declares `FRONTEND_URLS` as a secret environment setting. Set it to a comma-separated list of approved browser origins, for example `https://your-frontend.example.com`. Local development defaults to `http://127.0.0.1:3000,http://localhost:3000`.
+
 The service creates the indexed `sleep_records` table on the first record/analysis request. Sleep records are unique per `user_id` and `sleep_date`; the calculator currently uses the single-user ID `local-user` because this application does not include authentication.
 
 Sleep-record endpoints:

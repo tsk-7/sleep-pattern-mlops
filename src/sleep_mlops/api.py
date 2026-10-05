@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Literal
 
@@ -7,6 +8,7 @@ import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.routing import APIRoute
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from sleep_mlops.prepare import add_engineered_features
 from sleep_mlops.sleep_analysis_api import router as sleep_analysis_router
@@ -27,6 +29,21 @@ app = FastAPI(
     title="Sleep Pattern Analysis API",
     version="2.0.0",
     description="Predicts sleep quality using the updated timing-aware sleep dataset and feature pipeline.",
+)
+configured_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "FRONTEND_URLS",
+        "http://127.0.0.1:3000,http://localhost:3000",
+    ).split(",")
+    if origin.strip()
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=configured_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 # Recreate the endpoints on the app so FastAPI and Prometheus share concrete routes.
 for router in (sleep_records_router, sleep_analysis_router):
