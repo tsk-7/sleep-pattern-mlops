@@ -141,7 +141,13 @@ $env:SLEEP_DATABASE_URL = "mysql+pymysql://sleep_app:<url-encoded-password>@127.
 $env:PYTHONPATH = "src"
 ```
 
-For a public deployment, set `SLEEP_DATABASE_URL` to a managed MySQL-compatible database reachable from the deployment platform. Do not use `127.0.0.1` or `localhost` in a cloud deployment; those addresses refer to the API container itself.
+For a public deployment, set `SLEEP_DATABASE_URL` to a managed MySQL-compatible database or Supabase PostgreSQL database reachable from the deployment platform. Do not use `127.0.0.1` or `localhost` in a cloud deployment; those addresses refer to the API container itself. For Supabase, use the session pooler connection details and convert the URL to SQLAlchemy format:
+
+```text
+postgresql+psycopg2://postgres.<project-ref>:<password>@<pooler-host>:5432/postgres?sslmode=require
+```
+
+The API creates the `sleep_records` table in the configured database on its first sleep-record or analysis request.
 
 The Render blueprint also declares `FRONTEND_URLS` as a secret environment setting. Set it to a comma-separated list of approved browser origins, for example `https://your-frontend.example.com`. Local development defaults to `http://127.0.0.1:3000,http://localhost:3000`.
 

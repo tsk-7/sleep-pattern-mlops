@@ -49,7 +49,7 @@ def _session_factory() -> sessionmaker[Session]:
     if not database_url:
         raise HTTPException(
             status_code=503,
-            detail="Sleep database is not configured. Set SLEEP_DATABASE_URL for the MySQL database.",
+            detail="Sleep database is not configured. Set SLEEP_DATABASE_URL for the MySQL or Supabase PostgreSQL database.",
         )
     try:
         engine = create_engine(database_url, pool_pre_ping=True)
@@ -80,7 +80,7 @@ def get_db() -> Generator[Session, None, None]:
                 except SQLAlchemyError as error:
                     raise HTTPException(
                         status_code=503,
-                        detail="Could not connect to the sleep database. Check SLEEP_DATABASE_URL and ensure sleep_pattern_db exists.",
+                        detail="Could not connect to the sleep database. Check SLEEP_DATABASE_URL and ensure the configured database is reachable.",
                     ) from error
     session = factory()
     try:
