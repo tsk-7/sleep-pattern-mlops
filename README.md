@@ -121,6 +121,38 @@ Open [http://127.0.0.1:5000](http://127.0.0.1:5000). The experiment is named `sl
 
 ## 6. Start and test the FastAPI service
 
+### Configure the MySQL sleep-record database
+
+Install and start MySQL Server 8.0, then create the application database and a dedicated local account in MySQL Workbench or the MySQL CLI:
+
+```sql
+CREATE DATABASE IF NOT EXISTS sleep_pattern_db
+  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'sleep_app'@'127.0.0.1'
+  IDENTIFIED BY 'replace-with-a-strong-local-password';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX
+  ON sleep_pattern_db.* TO 'sleep_app'@'127.0.0.1';
+```
+
+Set `SLEEP_DATABASE_URL` in the same shell used to start FastAPI. URL-encode any reserved characters in the password. Keep this connection string out of Git:
+
+```powershell
+$env:SLEEP_DATABASE_URL = "mysql+pymysql://sleep_app:<url-encoded-password>@127.0.0.1:3306/sleep_pattern_db?charset=utf8mb4"
+$env:PYTHONPATH = "src"
+```
+
+The service creates the indexed `sleep_records` table on the first record/analysis request. Sleep records are unique per `user_id` and `sleep_date`; the calculator currently uses the single-user ID `local-user` because this application does not include authentication.
+
+Sleep-record endpoints:
+
+- `POST /api/sleep-records` — insert one sleep day and return server-calculated metrics.
+- `GET /api/sleep-records/{record_id}` and `GET /api/sleep-records/user/{user_id}` — retrieve saved records.
+- `PUT /api/sleep-records/{record_id}` and `DELETE /api/sleep-records/{record_id}` — update or remove a record.
+- `GET /api/sleep-analysis/daily/{user_id}/{sleep_date}` — daily record details.
+- `GET /api/sleep-analysis/weekly/{user_id}`, `/monthly/{user_id}`, `/pattern/{user_id}`, and `/weekend-comparison/{user_id}` — persisted timing analyses.
+
+Time fields use 24-hour `HH:MM`. The sleep date is the date the user woke up. Overnight transitions are ordered by the backend; invalid dates/times, impossible or unreasonable intervals, and duplicate user/date records return HTTP 400.
+
 Start the API from the project root after training:
 
 ```bash
@@ -134,7 +166,7 @@ $env:PYTHONPATH = "src"
 uvicorn sleep_mlops.api:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for the automatically generated Swagger interface. The service exposes `/health`, `/metrics`, and `/predict`. A sample request is:
+Open [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) for the automatically generated Swagger interface. The service exposes `/health`, `/metrics`, the sleep-record endpoints above, and the separate ML `/predict` endpoint. `/health` reports whether the MySQL URL is configured and the database is reachable. A sample prediction request is:
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/predict" \

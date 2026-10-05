@@ -18,6 +18,12 @@ def test_health():
     assert response.json()["status"] == "ok"
 
 
+def test_metrics_endpoint_remains_available():
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    assert "http_requests_total" in response.text
+
+
 def test_metadata_reports_updated_dataset():
     response = client.get("/metadata")
     assert response.status_code == 200

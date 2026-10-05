@@ -96,7 +96,10 @@ def train(config_path: str = "configs/config.yaml") -> dict:
             sk_model=pipeline,
             artifact_path="model",
             registered_model_name=config["mlflow"]["registered_model_name"],
-            skops_trusted_types=["sklearn.tree._tree.Tree"],
+            skops_trusted_types=[
+                "sklearn.tree._tree.Tree",
+                "sklearn.compose._column_transformer._RemainderColsList",
+            ],
         )
 
         Path("models").mkdir(exist_ok=True)
