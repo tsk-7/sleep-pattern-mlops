@@ -6,8 +6,12 @@ from typing import Literal
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.routing import APIRoute
 from pydantic import BaseModel, Field
 from sleep_mlops.prepare import add_engineered_features
+from sleep_mlops.sleep_analysis_api import router as sleep_analysis_router
+from sleep_mlops.sleep_records_api import router as sleep_records_router
+from sleep_mlops.sleep_store import database_status
 
 try:
     from prometheus_fastapi_instrumentator import Instrumentator
@@ -24,6 +28,19 @@ app = FastAPI(
     version="2.0.0",
     description="Predicts sleep quality using the updated timing-aware sleep dataset and feature pipeline.",
 )
+# Recreate the endpoints on the app so FastAPI and Prometheus share concrete routes.
+for router in (sleep_records_router, sleep_analysis_router):
+    for route in router.routes:
+        if isinstance(route, APIRoute):
+            app.add_api_route(
+                route.path,
+                route.endpoint,
+                methods=route.methods,
+                response_model=route.response_model,
+                status_code=route.status_code,
+                tags=route.tags,
+                name=route.name,
+            )
 
 
 class SleepFeatures(BaseModel):
@@ -70,12 +87,15 @@ def root() -> dict:
 
 @app.get("/health")
 def health() -> dict:
+    database_configured, database_available = database_status()
     return {
         "status": "ok",
         "model_available": MODEL_PATH.exists(),
         "updated_dataset_available": DATASET_PATH.exists(),
         "processed_train_available": TRAIN_PATH.exists(),
         "processed_test_available": TEST_PATH.exists(),
+        "sleep_database_configured": database_configured,
+        "sleep_database_available": database_available,
     }
 
 
